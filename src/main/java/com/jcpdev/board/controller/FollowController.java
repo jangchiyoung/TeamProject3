@@ -45,6 +45,7 @@ public class FollowController {
 				c_list.add(c_service.toDto(ent.get()));
 			}
 		}
+		model.addAttribute("search_id", search_id);
 		model.addAttribute("list", c_list);
 		return "follow";
 	}
@@ -59,6 +60,7 @@ public class FollowController {
 				c_list.add(c_service.toDto(ent.get()));
 			}
 		}
+		model.addAttribute("search_id", search_id);
 		model.addAttribute("list", c_list);
 		return "follower";
 	}
@@ -78,4 +80,52 @@ public class FollowController {
 			return "redirect:/starting/userProfile?client_id=" + id;
 		}
 	}
+	
+	@RequestMapping(value = "/starting/un_following", method = RequestMethod.GET)
+	public String un_following(String id, HttpSession session, HttpServletRequest request) {
+		String url = request.getServletPath();
+		if (url.equals("/starting/un_follow")) {
+			Client user = (Client) session.getAttribute("client");
+			Integer no = repository.un_Following(user.getClient_id(), id);
+			Follow temp = new Follow(no, user.getClient_id(), id);
+			repository.delete(service.toEntity(temp));
+			return "redirect:/starting/";
+		} else {
+			Client user = (Client) session.getAttribute("client");
+			Integer no = repository.un_Following(user.getClient_id(), id);
+			Follow temp = new Follow(no, user.getClient_id(), id);
+			repository.delete(service.toEntity(temp));
+			return "redirect:/starting/userProfile?client_id=" + id;
+		}
+	}
+	@RequestMapping(value = "/starting/un_follow", method = RequestMethod.GET)
+	public String un_follow(String id, HttpSession session, HttpServletRequest request) {
+		String url = request.getServletPath();
+		if (url.equals("/starting/un_follow")) {
+			Client user = (Client) session.getAttribute("client");
+			Integer no = repository.un_Follow(id, user.getClient_id());
+			Follow temp = new Follow(no, id, user.getClient_id());
+			repository.delete(service.toEntity(temp));
+			return "redirect:/starting/";
+		} else {
+			Client user = (Client) session.getAttribute("client");
+			Integer no = repository.un_Follow(id,user.getClient_id());
+			Follow temp = new Follow(no, id, user.getClient_id());
+			repository.delete(service.toEntity(temp));
+			return "redirect:/starting/userProfile?client_id=" + id;
+		}
+	}
+	/*
+	 * @RequestMapping(value = "/starting/follow_check", method =
+	 * RequestMethod.POST) public String follow_check(String id, HttpSession
+	 * session, HttpServletRequest request, Model model) { String url =
+	 * request.getServletPath(); if (url.equals("/starting/un_follow")) { Client
+	 * user = (Client) session.getAttribute("client"); String f_check =
+	 * repository.follow_check(user.getClient_id(), id);
+	 * model.addAttribute("f_check",f_check); return "redirect:/starting/"; } else {
+	 * Client user = (Client) session.getAttribute("client"); String f_check =
+	 * repository.follow_check(user.getClient_id(), id);
+	 * model.addAttribute("f_check",f_check); return
+	 * "redirect:/starting/userProfile?client_id=" + id; } }
+	 */
 }
